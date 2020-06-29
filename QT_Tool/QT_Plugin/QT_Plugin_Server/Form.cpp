@@ -5,9 +5,10 @@
 #include <functional>
 
 #pragma execution_character_set("utf-8")
-Form::Form(QWidget *parent) :
+Form::Form(InterFaceStruct* pInterFaceStruct,QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::Form)
+    ui(new Ui::Form),
+    m_pInterFaceStruct(pInterFaceStruct)
 {
     ui->setupUi(this);
 }

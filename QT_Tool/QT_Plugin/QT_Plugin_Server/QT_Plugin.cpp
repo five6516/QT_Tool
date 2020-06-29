@@ -1,9 +1,9 @@
 ﻿#include "QT_Plugin.h"
 #include "Form.h"
 
-QWidget* QT_Plugin_Init()
+QWidget* QT_Plugin_Init(InterFaceStruct* pInterFaceStruct)
 {
-    Form* form = new Form();
+    Form* form = new Form(pInterFaceStruct);
     return form;
 }
 

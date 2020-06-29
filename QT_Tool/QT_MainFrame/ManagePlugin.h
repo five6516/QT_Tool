@@ -2,6 +2,7 @@
 #define CMANAGEPLUGIN_H
 #include <QString>
 #include <QLibrary>
+#include "QT_Plugin.h"
 
 class CManagePlugin
 {
@@ -10,16 +11,17 @@ public:
 
     bool isPlugin(const QString& fileName);
     void releasePlugin();
-    QWidget* pluginWidget();
+    QWidget* pluginWidget(InterFaceStruct* pInterFaceStruct);
     const char* pluginName();
     const char* pluginContent();
+    void pluginSetInterFace();
 
     void setIndex(int index);
     int getIndex();
 private:
     int m_index;
     QLibrary m_Lib;
-    typedef QWidget*(*QT_Plugin_Init)();
+    typedef QWidget*(*QT_Plugin_Init)(InterFaceStruct*);
     typedef const char*(*QT_Plugin_Name)();
     typedef const char*(*QT_Plugin_Contents)();
 

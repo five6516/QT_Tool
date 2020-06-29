@@ -9,11 +9,10 @@ QWidget* QT_Plugin_Init(InterFaceStruct* pInterFaceStruct)
 
 const char* QT_Plugin_Name()
 {
-    return "Python Script";
+    return "Encryption";
 }
 
 const char* QT_Plugin_Contents()
 {
-    return "Script";
+    return "Encryption";
 }
-

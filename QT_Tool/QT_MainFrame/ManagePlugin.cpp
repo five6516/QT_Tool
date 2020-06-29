@@ -28,7 +28,8 @@ bool CManagePlugin::isPlugin(const QString& fileName)
             pQT_Plugin_Init = (QT_Plugin_Init)m_Lib.resolve("QT_Plugin_Init");
             pQT_Plugin_Name = (QT_Plugin_Name)m_Lib.resolve("QT_Plugin_Name");
             pQT_Plugin_Contents = (QT_Plugin_Contents)m_Lib.resolve("QT_Plugin_Contents");
-            if(pQT_Plugin_Init != nullptr && pQT_Plugin_Name != nullptr && pQT_Plugin_Contents != nullptr)
+            if(pQT_Plugin_Init != nullptr && pQT_Plugin_Name != nullptr &&
+               pQT_Plugin_Contents != nullptr )
             {
                 return true;
             }
@@ -38,11 +39,11 @@ bool CManagePlugin::isPlugin(const QString& fileName)
     return false;
 }
 
-QWidget* CManagePlugin::pluginWidget()
+QWidget* CManagePlugin::pluginWidget(InterFaceStruct* pInterFaceStruct)
 {
     if(pQT_Plugin_Init)
     {
-        return pQT_Plugin_Init();
+        return pQT_Plugin_Init(pInterFaceStruct);
     }
     return nullptr;
 }
@@ -64,6 +65,7 @@ const char* CManagePlugin::pluginContent()
     }
     return "null";
 }
+
 
 void CManagePlugin::releasePlugin()
 {

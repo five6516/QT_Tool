@@ -18,11 +18,18 @@ public:
     ~Form();
 
 public slots:
+    void clickEncryptButton(bool click);
+    void clickDecryptButton(bool click);
 
-
+    void clickEncryptFileButton(bool click);
+    void clickDecryptFileButton(bool click);
 private:
     Ui::Form *ui;
     InterFaceStruct* m_pInterFaceStruct;
+
+    int encrypt(uint8_t* in,int len);
+    int decrypt(uint8_t* in,int len);
+
 };
 
 #endif // FORM_H

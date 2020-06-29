@@ -1,4 +1,4 @@
-# QT Tool
+﻿# QT Tool
 
 QT制作的小工具集合，插件模式
 
@@ -29,9 +29,9 @@ QT制作的小工具集合，采用插件模式
 
 
 
-# python脚本插件 （Script）
+# Python Script插件
 
-1. 放置在 /Plugin/Script 文件夹中
+1. Python脚本放置在 /Plugin/Script 文件夹中
 
 2. 脚本调用内置包 `qt_app`，使用 `dir`查看函数 
 
