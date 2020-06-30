@@ -3,9 +3,16 @@
 #include <QDir>
 #include <QString>
 #include <QDebug>
+#include <QFileDialog>
 #include <functional>
 #include <fstream>
 #include "AES/aes.hpp"
+
+//用于填充的数据
+uint8_t fillArray[16] = { ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
+
+//用于检测是否已经被加密过
+uint8_t encryptFlag[] = { "has been encrypt" };
 
 static QString phex(uint8_t len,uint8_t* str)
 {
@@ -116,53 +123,173 @@ void Form::clickDecryptButton(bool click)
 
 void Form::clickEncryptFileButton(bool click)
 {
-    uint8_t *in = nullptr;
-    std::ifstream fs;
-    fs.open("F:\\1.txt",std::ios::binary);
-    if(fs)
-    {
-
-        fs.seekg(0,std::ios::end);
-        long len = fs.tellg();
-        m_pInterFaceStruct->pShowLogFunc("长度：" + QString::number(len));
-        in = new uint8_t[len];
-        fs.read((char*)in,len);
-        fs.close();
-        encrypt(in,len);
-        std::ofstream outfs;
-        outfs.open("F:\\2.txt",std::ios::binary);
-        outfs.write((const char*)in,len);
-        outfs.close();
-    }
-    else
-    {
-        m_pInterFaceStruct->pShowLogFunc("未打开文本");
-    }
-
+    QString file = QFileDialog::getOpenFileName(this,
+                        "选择文件",
+                        "",
+                        "all files (*.*)");
+    qDebug() << file;
+    encryptFile(file,file+".encry");
 }
 
 void Form::clickDecryptFileButton(bool click)
 {
-    uint8_t *in = nullptr;
+    QString file = QFileDialog::getOpenFileName(this,
+                        "选择文件",
+                        "",
+                        "all files (*.*)");
+    qDebug() << file;
+    decryptFile(file,file+".decry");
+}
+
+int Form::encryptString(QString& str)
+{
+    return 0;
+}
+
+int Form::decryptString(QString& str)
+{
+    return 0;
+}
+
+int Form::encryptFile(const QString& infile,const QString& outfile)
+{
     std::ifstream fs;
-    fs.open("F:\\2.txt",std::ios::binary);
-    if(fs)
+    fs.open(infile.toStdString().c_str(),std::ios::binary);
+    if(fs.is_open())
     {
+        /***********获取原始文件大小**************/
         fs.seekg(0,std::ios::end);
-        long len = fs.tellg();
-        m_pInterFaceStruct->pShowLogFunc("长度：" + QString::number(len));
-        in = new uint8_t[len];
-        fs.read((char*)in,len);
-        fs.close();
-        decrypt(in,len);
+        uint64_t fileLen = fs.tellg();
+        fs.seekg(0,std::ios::beg);
+        m_pInterFaceStruct->pShowLogFunc("加密：文件大小：" + QString::number(fileLen));
+
+        /***********计算填充字节**************/
+        uint64_t fillByteSize = (16 - fileLen % 16)%16;//填充字节
+        qDebug() << "加密：填充字节：" << fillByteSize;
+        qDebug() << "加密：总长度：" << fillByteSize + fileLen;
+
+        /***********读取文件数据**************/
+        uint8_t *in = new uint8_t[fillByteSize + fileLen + sizeof(encryptFlag)];
+        if(!in)
+        {
+            m_pInterFaceStruct->pShowLogFunc("无法申请到内存");
+            fs.close();//关闭文件
+            return -1;
+        }
+        fs.read((char*)(in + sizeof(encryptFlag)),fileLen);//读取文件数据，预留加密标记空间
+        fs.close();//关闭文件
+
+        /***********检测是否被加密过**************/
+        if(0 == memcmp(in,encryptFlag,sizeof(encryptFlag)))
+        {
+            m_pInterFaceStruct->pShowLogFunc("加密：文件被加密过，无法再加密");
+            delete[] in;
+            return -1;
+        }
+
+        /***********进行填充**************/
+        memcpy(in+ fileLen + sizeof(encryptFlag),fillArray,sizeof(uint8_t)*fillByteSize);//填充
+
+        /***********进行加密**************/
+        encrypt(in + sizeof(encryptFlag),fileLen+fillByteSize);
+
+        /***********加上加密标记**************/
+        uint64_t totalLen = fileLen + fillByteSize + sizeof(encryptFlag);
+        qDebug() << "加密：标记字节：" << sizeof(encryptFlag);
+        memcpy(in,encryptFlag,sizeof(encryptFlag));//加上加密标记
+
+        /***********写入文件**************/
         std::ofstream outfs;
-        outfs.open("F:\\3.txt",std::ios::binary);
-        outfs.write((const char*)in,len);
-        outfs.close();
+        outfs.open(outfile.toStdString().c_str(),std::ios::binary);
+        if(outfs.is_open())
+        {
+            outfs.write((const char*)in,totalLen);
+            outfs.close();
+            delete[] in;
+        }
+        else
+        {
+            m_pInterFaceStruct->pShowLogFunc("加密：未打开文件");
+            delete[] in;
+            return -1;
+        }
     }
     else
     {
-        m_pInterFaceStruct->pShowLogFunc("未打开文本");
+        m_pInterFaceStruct->pShowLogFunc("加密：未打开文件");
+        return -1;
     }
+
+    return 0;
+}
+
+int Form::decryptFile(const QString& infile,const QString& outfile)
+{
+    std::ifstream fs;
+    fs.open(infile.toStdString().c_str(),std::ios::binary);
+    if(fs.is_open())
+    {
+        /***********读取文件**************/
+        fs.seekg(0,std::ios::end);
+        uint64_t len = fs.tellg();
+        fs.seekg(0,std::ios::beg);
+        m_pInterFaceStruct->pShowLogFunc("解密：文件大小：" + QString::number(len));
+        uint8_t *in = new uint8_t[len];
+        if(!in)
+        {
+            m_pInterFaceStruct->pShowLogFunc("解密：无法申请到内存");
+            fs.close();//关闭文件
+            return -1;
+        }
+        fs.read((char*)in,len);
+        fs.close();
+
+        /***********检测是否被加密过**************/
+        qDebug() << "解密：标记字节：" << sizeof(encryptFlag);
+        if(0 != memcmp(in,encryptFlag,sizeof(encryptFlag)))
+        {
+            m_pInterFaceStruct->pShowLogFunc("解密：文件未被加密过，无法解密");
+            delete [] in;
+            return -1;
+        }
+
+        /***********解密**************/
+        decrypt(in + sizeof(encryptFlag),len-sizeof(encryptFlag));
+
+        /***********去除填充字节**************/
+        int i = len-1;
+        for(;i > len-16; i--)
+        {
+            if(in[i] != fillArray[0])
+            {
+                break;
+            }
+        }
+        uint64_t fillByteSize = len -1 -i;//计算填充字节
+        qDebug() << "解密：填充字节：" << fillByteSize;
+
+        /***********写入文件**************/
+        std::ofstream outfs;
+        outfs.open(outfile.toStdString().c_str(),std::ios::binary);
+        if(outfs.is_open())
+        {
+            outfs.write((const char*)(in+sizeof(encryptFlag)),len - fillByteSize - sizeof(encryptFlag));
+            outfs.close();
+            delete [] in;
+        }
+        else
+        {
+            m_pInterFaceStruct->pShowLogFunc("解密：未打开文件");
+            delete [] in;
+             return -1;
+        }
+    }
+    else
+    {
+        m_pInterFaceStruct->pShowLogFunc("解密：未打开文件");
+        return -1;
+    }
+
+    return 0;
 }
 

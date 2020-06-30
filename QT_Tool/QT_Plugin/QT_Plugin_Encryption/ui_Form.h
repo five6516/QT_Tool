@@ -12,8 +12,10 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
+#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -21,36 +23,57 @@ QT_BEGIN_NAMESPACE
 class Ui_Form
 {
 public:
-    QComboBox *comboBox;
+    QGridLayout *gridLayout;
     QPlainTextEdit *plainTextEdit;
-    QPushButton *encrypt_pushButton;
-    QPushButton *decrypt_pushButton;
+    QVBoxLayout *verticalLayout;
+    QComboBox *comboBox;
     QPushButton *decryptfile_pushButton;
     QPushButton *encryptfile_pushButton;
+    QPushButton *encrypt_pushButton;
+    QPushButton *decrypt_pushButton;
 
     void setupUi(QWidget *Form)
     {
         if (Form->objectName().isEmpty())
             Form->setObjectName(QString::fromUtf8("Form"));
         Form->resize(400, 300);
-        comboBox = new QComboBox(Form);
-        comboBox->setObjectName(QString::fromUtf8("comboBox"));
-        comboBox->setGeometry(QRect(40, 40, 69, 20));
+        gridLayout = new QGridLayout(Form);
+        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         plainTextEdit = new QPlainTextEdit(Form);
         plainTextEdit->setObjectName(QString::fromUtf8("plainTextEdit"));
-        plainTextEdit->setGeometry(QRect(30, 90, 191, 141));
-        encrypt_pushButton = new QPushButton(Form);
-        encrypt_pushButton->setObjectName(QString::fromUtf8("encrypt_pushButton"));
-        encrypt_pushButton->setGeometry(QRect(30, 250, 75, 23));
-        decrypt_pushButton = new QPushButton(Form);
-        decrypt_pushButton->setObjectName(QString::fromUtf8("decrypt_pushButton"));
-        decrypt_pushButton->setGeometry(QRect(130, 250, 75, 23));
+
+        gridLayout->addWidget(plainTextEdit, 0, 0, 1, 1);
+
+        verticalLayout = new QVBoxLayout();
+        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        comboBox = new QComboBox(Form);
+        comboBox->setObjectName(QString::fromUtf8("comboBox"));
+
+        verticalLayout->addWidget(comboBox);
+
         decryptfile_pushButton = new QPushButton(Form);
         decryptfile_pushButton->setObjectName(QString::fromUtf8("decryptfile_pushButton"));
-        decryptfile_pushButton->setGeometry(QRect(250, 180, 75, 23));
+
+        verticalLayout->addWidget(decryptfile_pushButton);
+
         encryptfile_pushButton = new QPushButton(Form);
         encryptfile_pushButton->setObjectName(QString::fromUtf8("encryptfile_pushButton"));
-        encryptfile_pushButton->setGeometry(QRect(250, 230, 75, 23));
+
+        verticalLayout->addWidget(encryptfile_pushButton);
+
+        encrypt_pushButton = new QPushButton(Form);
+        encrypt_pushButton->setObjectName(QString::fromUtf8("encrypt_pushButton"));
+
+        verticalLayout->addWidget(encrypt_pushButton);
+
+        decrypt_pushButton = new QPushButton(Form);
+        decrypt_pushButton->setObjectName(QString::fromUtf8("decrypt_pushButton"));
+
+        verticalLayout->addWidget(decrypt_pushButton);
+
+
+        gridLayout->addLayout(verticalLayout, 0, 1, 1, 1);
+
 
         retranslateUi(Form);
 
@@ -60,10 +83,10 @@ public:
     void retranslateUi(QWidget *Form)
     {
         Form->setWindowTitle(QApplication::translate("Form", "Form", nullptr));
-        encrypt_pushButton->setText(QApplication::translate("Form", "\345\212\240\345\257\206\345\255\227\347\254\246\344\270\262", nullptr));
-        decrypt_pushButton->setText(QApplication::translate("Form", "\350\247\243\345\257\206\345\255\227\347\254\246\344\270\262", nullptr));
         decryptfile_pushButton->setText(QApplication::translate("Form", "\350\247\243\345\257\206\346\226\207\346\234\254", nullptr));
         encryptfile_pushButton->setText(QApplication::translate("Form", "\345\212\240\345\257\206\346\226\207\346\234\254", nullptr));
+        encrypt_pushButton->setText(QApplication::translate("Form", "\345\212\240\345\257\206\345\255\227\347\254\246\344\270\262", nullptr));
+        decrypt_pushButton->setText(QApplication::translate("Form", "\350\247\243\345\257\206\345\255\227\347\254\246\344\270\262", nullptr));
     } // retranslateUi
 
 };

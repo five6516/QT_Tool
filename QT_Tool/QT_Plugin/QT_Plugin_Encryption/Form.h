@@ -30,6 +30,11 @@ private:
     int encrypt(uint8_t* in,int len);
     int decrypt(uint8_t* in,int len);
 
+    int encryptString(QString& str);
+    int decryptString(QString& str);
+    int encryptFile(const QString& infile,const QString& outfile);
+    int decryptFile(const QString& infile,const QString& outfile);
+
 };
 
 #endif // FORM_H
