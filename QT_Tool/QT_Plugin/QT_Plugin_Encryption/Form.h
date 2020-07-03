@@ -3,6 +3,9 @@
 
 #include <QWidget>
 #include <QListWidgetItem>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QMimeData>
 #include "QT_Plugin.h"
 
 namespace Ui {
@@ -23,6 +26,9 @@ public slots:
 
     void clickEncryptFileButton(bool click);
     void clickDecryptFileButton(bool click);
+protected:
+    void dropEvent(QDropEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
 private:
     Ui::Form *ui;
     InterFaceStruct* m_pInterFaceStruct;
@@ -34,6 +40,10 @@ private:
     int decryptString(QString& str);
     int encryptFile(const QString& infile,const QString& outfile);
     int decryptFile(const QString& infile,const QString& outfile);
+    bool fileIsEncrypt(const QString& file);
+
+    void findFile(const QString& path);
+    QVector<QString> fileListPath;
 
 };
 

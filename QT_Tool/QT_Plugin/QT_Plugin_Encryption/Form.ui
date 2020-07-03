@@ -13,9 +13,20 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <widget class="QPlainTextEdit" name="plainTextEdit"/>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;加密解密文件会覆盖原有文件，请注意备份！&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;文件/文件夹加解密直接拖入即可&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPlainTextEdit" name="plainTextEdit"/>
+     </item>
+    </layout>
    </item>
    <item row="0" column="1">
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -23,16 +34,16 @@
       <widget class="QComboBox" name="comboBox"/>
      </item>
      <item>
-      <widget class="QPushButton" name="decryptfile_pushButton">
+      <widget class="QPushButton" name="encryptfile_pushButton">
        <property name="text">
-        <string>解密文本</string>
+        <string>加密文件</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="encryptfile_pushButton">
+      <widget class="QPushButton" name="decryptfile_pushButton">
        <property name="text">
-        <string>加密文本</string>
+        <string>解密文件</string>
        </property>
       </widget>
      </item>
