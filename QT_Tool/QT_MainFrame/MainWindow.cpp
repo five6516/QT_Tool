@@ -92,7 +92,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->centralWidget->setLayout(pQVBoxLayout);
 
-    connect(ui->ac_version,SIGNAL(triggered()),this,SLOT(ButtonVersion()));
+    connect(ui->ac_version,SIGNAL(triggered()),this,SLOT(buttonVersion()));
     connect(m_pQTreeWidget,SIGNAL(itemPressed(QTreeWidgetItem *,int)),this,SLOT(treeItemPressed(QTreeWidgetItem*,int)));
     connect(m_pQListWidget,SIGNAL(itemDoubleClicked(QListWidgetItem*)),this,SLOT(ItemDoubleClick(QListWidgetItem*)));
 }
@@ -173,7 +173,7 @@ void MainWindow::ItemDoubleClick(QListWidgetItem* item)
 
 void MainWindow::buttonVersion()
 {
-    QMessageBox::information(NULL, "Version", "hjfang\n1.0.0.0");
+    QMessageBox::information(NULL, "Version", "hjfang\n1.0.0.1");
 }
 
 
