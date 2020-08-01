@@ -43,9 +43,11 @@ MainWindow::MainWindow(QWidget *parent) :
     findPlugin();
 
     //加入控件界面
+    int i=0;
     for(auto plugin : m_mapPlugin)
     {
         QWidget* pWidget = plugin.second->pluginWidget(m_pInterFaceStruct);
+        plugin.second->setIndex(i++);
         m_pQStackedWidget->addWidget(pWidget);//加入QStackedWidget
         qDebug()<< "add" << plugin.second->pluginName();
 
@@ -119,7 +121,6 @@ int MainWindow::findPlugin()
     QFileInfoList fileInfoList = fileDir.entryInfoList();
     QStringList fileList;
     qDebug()<<fileInfoList .count();
-    int i=0;
     for(int inf = 0; inf < fileInfoList .count(); inf ++)
     {
         QString fileName = fileInfoList.at(inf).absoluteFilePath();
@@ -131,7 +132,6 @@ int MainWindow::findPlugin()
             //不存在相同名字的插件，如果有，则不加载
             if(m_mapPlugin.find(std::string(pManagePlugin->pluginName())) == m_mapPlugin.end())
             {
-                pManagePlugin->setIndex(i++);
                 m_mapPlugin.insert(std::pair<std::string,CManagePlugin*>(std::string(pManagePlugin->pluginName()),pManagePlugin));
             }
             else
@@ -144,7 +144,7 @@ int MainWindow::findPlugin()
     return  0;
 }
 
-bool MainWindow::showLogPlus(QString data, int R,int G,int B,int Size)
+bool MainWindow::showLogPlusSlot(QString data, int R,int G,int B,int Size)
 {
     QListWidgetItem *listItem = new QListWidgetItem(data);
     listItem->setSizeHint(QSize(60, 25));  // use to change the height
@@ -154,15 +154,33 @@ bool MainWindow::showLogPlus(QString data, int R,int G,int B,int Size)
     m_pQListWidget->scrollToBottom();
 
     return true;
+
 }
 
-bool MainWindow::showLog(QString data)
+bool MainWindow::showLogSlot(QString data)
 {
     QListWidgetItem *listItem = new QListWidgetItem(data);
 
     m_pQListWidget->insertItem(m_pQListWidget->count(), listItem);
     m_pQListWidget->scrollToBottom();
 
+    return true;
+}
+
+bool MainWindow::showLogPlus(QString data, int R,int G,int B,int Size)
+{
+    QMetaObject::invokeMethod(this,"showLogPlusSlot",Qt :: AutoConnection,
+                              Q_ARG(QString,data),
+                              Q_ARG(int,R),
+                              Q_ARG(int,G),
+                              Q_ARG(int,B),
+                              Q_ARG(int,Size));
+    return true;
+}
+
+bool MainWindow::showLog(QString data)
+{
+    QMetaObject::invokeMethod(this,"showLogSlot",Qt :: AutoConnection,Q_ARG(QString,data));
     return true;
 }
 

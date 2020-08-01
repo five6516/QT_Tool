@@ -41,15 +41,15 @@ private:
     InterFaceStruct* m_pInterFaceStruct;//接口
     int findPlugin();
     int initInterFace();
+
 public slots:
     void treeItemPressed(QTreeWidgetItem *item,int column);
     void ItemDoubleClick(QListWidgetItem* item);
     void buttonVersion();
     void buttonSaveLog();
     void buttonClearLog();
-
-
-
+    bool showLogPlusSlot(QString data, int R,int G,int B,int Size);
+    bool showLogSlot(QString data);
 };
 
 #endif // MAINWINDOW_H
